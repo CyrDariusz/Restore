@@ -11,6 +11,7 @@ import {
 import { Box } from "@mui/system";
 import { Link, NavLink } from "react-router-dom";
 import { useStoreContext } from "../context/StoreContext";
+import { useAppSelector } from "../store/configureStore";
 
 const midLinks = [
   { title: "catalog", path: "/catalog" },
@@ -36,8 +37,8 @@ const navStyles = {
 };
 
 export default function Header() {
-  const {basket} = useStoreContext();
-  const itemCount = basket?.items.reduce((sum,item)=>sum+item.quantity,0);
+  const { basket } = useAppSelector((state) => state.basket);
+  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <AppBar position="static" sx={{ mb: 4 }}>
@@ -58,8 +59,15 @@ export default function Header() {
             </ListItem>
           ))}
         </List>
-        <Box display='flex' alignItems='center'>
-          <IconButton component={Link} to='/basket' size="large" edge="start" color="inherit" sx={{ mr: 2 }}>
+        <Box display="flex" alignItems="center">
+          <IconButton
+            component={Link}
+            to="/basket"
+            size="large"
+            edge="start"
+            color="inherit"
+            sx={{ mr: 2 }}
+          >
             <Badge badgeContent={itemCount} color="secondary">
               <ShoppingCart />
             </Badge>
