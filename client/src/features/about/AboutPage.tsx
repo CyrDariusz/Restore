@@ -4,7 +4,7 @@ import agent from "../../app/api/agent";
 import { useState } from "react";
 
 export default function AboutPage(){
-    const[getValidationErrors,setValidationErrors]=useState<string[]>([]);
+    const[validationErrors,setValidationErrors]=useState<string[]>([]);
     
     function getValidationError(){
         agent.TestErrors.getValidationError()
@@ -21,11 +21,11 @@ export default function AboutPage(){
                 <Button variant="contained" onClick={()=>agent.TestErrors.get500Error().catch(error=>console.log(error))}>Test 500 Error</Button>
                 <Button variant="contained" onClick={getValidationError}>Test Validation Error</Button>
             </ButtonGroup>
-            {getValidationErrors.length>0&&
+            {validationErrors.length>0&&
                 <Alert severity="error">
                     <AlertTitle>Validation Errors</AlertTitle>
                     <List>
-                        {getValidationErrors.map(error=>(
+                        {validationErrors.map(error=>(
                             <ListItem key={error}>
                                 <ListItemText>{error}</ListItemText>
                             </ListItem>
