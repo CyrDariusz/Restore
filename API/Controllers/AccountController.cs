@@ -16,9 +16,13 @@ namespace API.Controllers
         private readonly UserManager<User> _userManager;
         private readonly TokenService _tokenService;
 
-        public AccountController(UserManager<User> userManager, TokenService tokenService,StoreContext context)
+        public AccountController(
+            UserManager<User> userManager,
+            TokenService tokenService,
+            StoreContext context
+        )
         {
-            _context= context;
+            _context = context;
             _userManager = userManager;
             _tokenService = tokenService;
         }
@@ -31,22 +35,24 @@ namespace API.Controllers
             if (user is null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
                 return Unauthorized();
 
-                var userBasket = await RetrieveBasket(loginDto.Username);
-                var anonBasket = await RetrieveBasket(Request.Cookies["buyerId"]);
+            var userBasket = await RetrieveBasket(loginDto.Username);
+            var anonBasket = await RetrieveBasket(Request.Cookies["buyerId"]);
 
-                if(anonBasket!=null)
-                {
-                    if(userBasket!=null) _context.Baskets.Remove(userBasket);
-                    anonBasket.BuyerId=user.UserName;
-                    Response.Cookies.Delete("buyerId");
-                    await _context.SaveChangesAsync();
-                }
+            if (anonBasket != null)
+            {
+                if (userBasket != null)
+                    _context.Baskets.Remove(userBasket);
+                anonBasket.BuyerId = user.UserName;
+                Response.Cookies.Delete("buyerId");
+                await _context.SaveChangesAsync();
+            }
 
             return new UserDto
             {
                 Email = user.Email,
                 Token = await _tokenService.GenerateToken(user),
-                Basket = anonBasket !=null ? anonBasket.MapBasketToDto():userBasket?.MapBasketToDto()
+                Basket =
+                    anonBasket != null ? anonBasket.MapBasketToDto() : userBasket?.MapBasketToDto()
             };
         }
 
@@ -73,7 +79,8 @@ namespace API.Controllers
 
         [Authorize]
         [HttpGet("currentUser")]
-        public async Task<ActionResult<UserDto>> GetCurrentUser(){
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var userBasket = await RetrieveBasket(User.Identity.Name);
 
@@ -83,6 +90,16 @@ namespace API.Controllers
                 Token = await _tokenService.GenerateToken(user),
                 Basket = userBasket?.MapBasketToDto()
             };
+        }
+
+        [Authorize]
+        [HttpGet("savedAddress")]
+        public async Task<ActionResult<UserAddress>> GetSavedAddress()
+        {
+            return await _userManager.Users
+                .Where(x => x.UserName == User.Identity.Name)
+                .Select(user => user.Address)
+                .FirstOrDefaultAsync();
         }
 
         private async Task<Basket> RetrieveBasket(string buyerId)
