@@ -2,7 +2,7 @@ import { Box } from "@mui/system";
 import { Order } from "../../app/models/order";
 import { Button, Grid, Typography } from "@mui/material";
 import BasketTable from "../basket/BasketTable";
-import { Basket, BasketItem } from "../../app/models/basket";
+import { BasketItem } from "../../app/models/basket";
 import BasketSummary from "../basket/BasketSummary";
 
 interface Props {

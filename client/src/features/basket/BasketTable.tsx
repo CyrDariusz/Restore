@@ -8,12 +8,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Grid,
-  Button,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { Link } from "react-router-dom";
-import BasketSummary from "./BasketSummary";
 import { removeBasketItemAsync, addBasketItemAsync } from "./basketSlice";
 import { useAppSelector, useAppDispatch } from "../../app/store/configureStore";
 import { BasketItem } from "../../app/models/basket";
